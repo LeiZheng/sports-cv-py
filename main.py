@@ -11,7 +11,7 @@ firstFrame = True
 frames = 0
 
 
-cap = cv2.VideoCapture("C:/vsc/data/hockey-tracking/player.avi")
+cap = cv2.VideoCapture("C:/VCS/data/hockey-test-video/player.avi")
 
 while cap.isOpened():
     ret, frame = cap.read()
@@ -36,11 +36,12 @@ while cap.isOpened():
             (x, y, w, h) = cv2.boundingRect(c)
             cv2.rectangle(frame, (x,y), (x +w, y + h), (0,255, 0), 1)
             if firstFrame is True:
-                pedestrians[counter] = Player("player " + str(counter), frame, (x, y, w,h))
-            counter += 1
+                pedestrians.append(Player("player " + str(counter), frame, (x, y, w,h)))
+                # pedestrians[counter] =
+                counter += 1
 
 
-    for i, p in pedestrians:
+    for p in pedestrians:
         p.update(frame)
 
     firstFrame = False

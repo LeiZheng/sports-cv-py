@@ -1,5 +1,11 @@
 import cv2
 import numpy as np
+def center(points):
+    """calculates centroid of a given matrix"""
+    x = (points[0][0] + points[1][0] + points[2][0] + points[3][0]) / 4
+    y = (points[0][1] + points[1][1] + points[2][1] + points[3][1]) / 4
+    return np.array([np.float32(x), np.float32(y)], np.float32)
+
 class Player():
     def buildKanmanFilter(self):
         filter = cv2.KalmanFilter(4,2)
@@ -12,7 +18,7 @@ class Player():
         self.name = name;
         x, y, w, h = windows;
         self.roi = cv2.cvtColor(frame[y:y + h, x:x+w], cv2.COLOR_BGR2HSV)
-        roi_hist = cv2.calcHist([self.roi], [0],None, [16],[0, 180])
+        roi_hist = cv2.calcHist([self.roi], [0], None, [16],[0, 180])
         self.roi_hist = cv2.normalize(roi_hist, roi_hist, 0, 255, cv2.NORM_MINMAX)
 
         # set up the kalman for forecast
@@ -34,17 +40,16 @@ class Player():
         ret, self.track_window = cv2.CamShift(back_project, self.track_window, self.term_crit)
         pts = cv2.boxPoints(ret)
         pts = np.int0(pts)
-        x, y, w, h = cv2.boundingRect(pts)
-        self.center = [[x + w/2], [y+h/2]]
+        self.center = center(pts)
         cv2.polylines(frame, [pts], True, 255,1)
-        self.kalman.correct([self.center])
+        self.kalman.correct(self.center)
 
         prediction = self.kalman.predict()
         cv2.circle(frame, (int(prediction[0]), int(prediction[1])), 4, (0,255,0), -1)
 
-        cv2.putText(frame, "Name: %s -> %s" (self.name, self.center), 'Sport Max', cv2.QT_FONT_NORMAL, 0.6, (0,0,0),1, cv2.LINE_AA )
+        cv2.putText(frame, self.name, (11,300), cv2.QT_FONT_NORMAL, 0.6, (0,0,0),1, cv2.LINE_AA )
 
-        cv2.putText(frame, "Name: %s -> %s"(self.name, self.center), 'Sport Max', cv2.QT_FONT_NORMAL, 0.6, (0, 255, 0), 1, cv2.LINE_AA)
+        cv2.putText(frame, self.name, (12,322), cv2.QT_FONT_NORMAL, 0.6, (0, 255, 0), 1, cv2.LINE_AA)
 
 
 
