@@ -11,7 +11,7 @@ firstFrame = True
 frames = 0
 
 
-cap = cv2.VideoCapture("C:/VCS/data/hockey-test-video/player.avi")
+cap = cv2.VideoCapture("C:/vsc/data/hockey-tracking/test2.avi")
 
 while cap.isOpened():
     ret, frame = cap.read()
